@@ -43,20 +43,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class UnixEpochTimestampGenerator extends Generator<Long> {
 
-  /** The base timestamp used as a starting reference. */
-  protected long startTimestamp;
-  
   /** The current timestamp that will be incremented. */
-  protected long currentTimestamp;
+  private long currentTimestamp;
 
   /** The last used timestamp. Should always be one interval behind current. */
-  protected long lastTimestamp;
+  private long lastTimestamp;
 
   /** The interval to increment by. Multiplied by {@link #timeUnits}. */
-  protected long interval;
+  private long interval;
 
   /** The units of time the interval represents. */
-  protected TimeUnit timeUnits;
+  private TimeUnit timeUnits;
 
   /**
    * Default ctor with the current system time and a 60 second interval.
@@ -97,8 +94,7 @@ public class UnixEpochTimestampGenerator extends Generator<Long> {
     this.timeUnits = timeUnits;
     // move the first timestamp by 1 interval so that the first call to nextValue
     // returns this timestamp
-    currentTimestamp = startTimestamp - getOffset(1);
-    this.startTimestamp = currentTimestamp;
+    this.currentTimestamp = startTimestamp - getOffset(1);
     lastTimestamp = currentTimestamp - getOffset(1);
   }
 
@@ -137,7 +133,6 @@ public class UnixEpochTimestampGenerator extends Generator<Long> {
     default:
       throw new IllegalArgumentException("Unhandled time unit type: " + timeUnits);
     }
-    startTimestamp = currentTimestamp;
   }
 
   @Override

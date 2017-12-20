@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2017 YCSB contributors. All rights reserved.
+ * Copyright (c) 2012 YCSB contributors. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License. You
@@ -30,6 +30,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -43,15 +44,15 @@ import static org.junit.Assert.assertEquals;
 public class ElasticsearchClientTest {
 
     @ClassRule public final static TemporaryFolder temp = new TemporaryFolder();
-    private final static ElasticsearchClient instance = new ElasticsearchClient();
-    private final static HashMap<String, ByteIterator> MOCK_DATA;
-    private final static String MOCK_TABLE = "MOCK_TABLE";
-    private final static String MOCK_KEY0 = "0";
-    private final static String MOCK_KEY1 = "1";
-    private final static String MOCK_KEY2 = "2";
+    protected final static ElasticsearchClient instance = new ElasticsearchClient();
+    protected final static HashMap<String, ByteIterator> MOCK_DATA;
+    protected final static String MOCK_TABLE = "MOCK_TABLE";
+    protected final static String MOCK_KEY0 = "0";
+    protected final static String MOCK_KEY1 = "1";
+    protected final static String MOCK_KEY2 = "2";
 
     static {
-        MOCK_DATA = new HashMap<>(10);
+        MOCK_DATA = new HashMap<String, ByteIterator>(10);
         for (int i = 1; i <= 10; i++) {
             MOCK_DATA.put("field" + i, new StringByteIterator("value" + i));
         }
@@ -87,6 +88,7 @@ public class ElasticsearchClientTest {
      */
     @Test
     public void testInsert() {
+        System.out.println("insert");
         Status result = instance.insert(MOCK_TABLE, MOCK_KEY0, MOCK_DATA);
         assertEquals(Status.OK, result);
     }
@@ -96,6 +98,7 @@ public class ElasticsearchClientTest {
      */
     @Test
     public void testDelete() {
+        System.out.println("delete");
         Status result = instance.delete(MOCK_TABLE, MOCK_KEY1);
         assertEquals(Status.OK, result);
     }
@@ -105,8 +108,9 @@ public class ElasticsearchClientTest {
      */
     @Test
     public void testRead() {
+        System.out.println("read");
         Set<String> fields = MOCK_DATA.keySet();
-        HashMap<String, ByteIterator> resultParam = new HashMap<>(10);
+        HashMap<String, ByteIterator> resultParam = new HashMap<String, ByteIterator>(10);
         Status result = instance.read(MOCK_TABLE, MOCK_KEY1, fields, resultParam);
         assertEquals(Status.OK, result);
     }
@@ -116,8 +120,9 @@ public class ElasticsearchClientTest {
      */
     @Test
     public void testUpdate() {
+        System.out.println("update");
         int i;
-        HashMap<String, ByteIterator> newValues = new HashMap<>(10);
+        HashMap<String, ByteIterator> newValues = new HashMap<String, ByteIterator>(10);
 
         for (i = 1; i <= 10; i++) {
             newValues.put("field" + i, new StringByteIterator("newvalue" + i));
@@ -127,12 +132,13 @@ public class ElasticsearchClientTest {
         assertEquals(Status.OK, result);
 
         //validate that the values changed
-        HashMap<String, ByteIterator> resultParam = new HashMap<>(10);
+        HashMap<String, ByteIterator> resultParam = new HashMap<String, ByteIterator>(10);
         instance.read(MOCK_TABLE, MOCK_KEY1, MOCK_DATA.keySet(), resultParam);
 
         for (i = 1; i <= 10; i++) {
             assertEquals("newvalue" + i, resultParam.get("field" + i).toString());
         }
+
     }
 
     /**
@@ -140,9 +146,10 @@ public class ElasticsearchClientTest {
      */
     @Test
     public void testScan() {
+        System.out.println("scan");
         int recordcount = 10;
         Set<String> fields = MOCK_DATA.keySet();
-        Vector<HashMap<String, ByteIterator>> resultParam = new Vector<>(10);
+        Vector<HashMap<String, ByteIterator>> resultParam = new Vector<HashMap<String, ByteIterator>>(10);
         Status result = instance.scan(MOCK_TABLE, MOCK_KEY1, recordcount, fields, resultParam);
         assertEquals(Status.OK, result);
     }
